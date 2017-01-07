@@ -2,8 +2,8 @@
 #   Define additional files to be installed
 #------------------------------------------------------------------------------
 
-install( FILES "doc/LICENSE.txt" DESTINATION . )
-install( FILES "doc/README.txt"  DESTINATION . )
+install( FILES "LICENSE.txt" DESTINATION . )
+install( FILES "README.txt"  DESTINATION . )
 
 #------------------------------------------------------------------------------
 

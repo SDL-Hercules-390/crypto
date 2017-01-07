@@ -310,15 +310,15 @@
 				Name="doc"
 				>
 				<File
-					RelativePath=".\doc\LICENSE.txt"
+					RelativePath=".\LICENSE.txt"
 					>
 				</File>
 				<File
-					RelativePath=".\doc\README.md"
+					RelativePath=".\README.md"
 					>
 				</File>
 				<File
-					RelativePath=".\doc\README.txt"
+					RelativePath=".\README.txt"
 					>
 				</File>
 			</Filter>
