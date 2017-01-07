@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{855CC674-FB9F-4211-B0FE-47B7E3A0E53B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include">
+      <UniqueIdentifier>{E743F63B-7D57-4b78-998E-F204BE3322EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\source">
+      <UniqueIdentifier>{97AF09A8-6967-4bf1-A6F6-559DC57396B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files">
+      <UniqueIdentifier>{FA9E9091-CE4B-43b5-A464-EDAC19A22346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\doc">
+      <UniqueIdentifier>{433EC714-9BAD-4f28-9885-CB7362BA6F84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build">
+      <UniqueIdentifier>{83727513-1EAA-4279-B1B8-FF19CC2164E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\cmake">
+      <UniqueIdentifier>{10DF1E8E-15CF-43b7-A172-9ABA0DDABB3F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\cmake\modules">
+      <UniqueIdentifier>{BD616093-3960-46e6-AA0E-8055596A763F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\cmake\includes">
+      <UniqueIdentifier>{38C2CF9D-43D5-4d22-A61D-C73D8B9D004A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\msvc">
+      <UniqueIdentifier>{4f4109b6-c0ef-4e32-a1f4-deb22d044cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\msvc\VS2008">
+      <UniqueIdentifier>{f9065844-6c95-417d-acf1-765a3a17e14d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\msvc\VS2015">
+      <UniqueIdentifier>{030664e5-56bb-45db-8005-dfea8bbeb12a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\scripts">
+      <UniqueIdentifier>{901A5D2A-90F1-48e0-9617-76D69A6696A5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\scripts\Linux">
+      <UniqueIdentifier>{1645FF45-25C8-467d-A332-82CC9ECF084F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files\build\scripts\Windows">
+      <UniqueIdentifier>{53A40306-0254-4144-97E5-22BFD88ADD0D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\rijndael.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sha1.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sha2.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sshdes.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\crypto.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rijndael.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sha1.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sha2.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sshdes.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes">
+      <Filter>Other Files</Filter>
+    </None>
+    <None Include="BUILDING">
+      <Filter>Other Files\build</Filter>
+    </None>
+    <None Include="cmake_uninstall.cmake.in">
+      <Filter>Other Files\build\cmake</Filter>
+    </None>
+    <None Include="platform.h.in">
+      <Filter>Other Files\build\cmake</Filter>
+    </None>
+    <None Include="cmake\modules\CapitalizeWord.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\CheckHeader.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\cotire.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\GIT_Revision.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\ParseBinaryDir.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\Trace.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\Vdump.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="crypto_VS2008.sln">
+      <Filter>Other Files\build\msvc\VS2008</Filter>
+    </None>
+    <None Include="crypto_VS2008.vcproj">
+      <Filter>Other Files\build\msvc\VS2008</Filter>
+    </None>
+    <None Include="crypto_VS2015.sln">
+      <Filter>Other Files\build\msvc\VS2015</Filter>
+    </None>
+    <None Include="crypto_VS2015.vcxproj">
+      <Filter>Other Files\build\msvc\VS2015</Filter>
+    </None>
+    <None Include="crypto_VS2015.vcxproj.filters">
+      <Filter>Other Files\build\msvc\VS2015</Filter>
+    </None>
+    <None Include="build">
+      <Filter>Other Files\build\scripts\Linux</Filter>
+    </None>
+    <None Include="build.cmd">
+      <Filter>Other Files\build\scripts\Windows</Filter>
+    </None>
+    <None Include="vstools.cmd">
+      <Filter>Other Files\build\scripts\Windows</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt">
+      <Filter>Other Files\build\cmake</Filter>
+    </Text>
+    <Text Include="cflags.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="extra.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="headers.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="includes.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="project.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="sources.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="targetver.txt">
+      <Filter>Other Files\build\cmake\includes</Filter>
+    </Text>
+    <Text Include="doc\LICENSE.txt">
+      <Filter>Other Files\doc</Filter>
+    </Text>
+    <Text Include="doc\README.txt">
+      <Filter>Other Files\doc</Filter>
+    </Text>
+    <Text Include="doc\README.md">
+      <Filter>Other Files\doc</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
