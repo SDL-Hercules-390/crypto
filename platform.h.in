@@ -106,12 +106,12 @@ typedef uint64_t                        u_int64_t;
 /*  Miscellaneous                                                    */
 /*-------------------------------------------------------------------*/
 
-#ifndef NULL
-#  ifdef __STDC__
-#    define NULL                        (void*) 0
-#  else
-#    define NULL                                0
-#  endif
+#ifndef     NULL
+  #ifdef  __STDC__
+    #define NULL                        (void*) 0
+  #else
+    #define NULL                                0
+  #endif
 #endif
 
 #endif /* _PLATFORM_H_ */

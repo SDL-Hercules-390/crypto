@@ -1,10 +1,10 @@
-/* $OpenBSD: sha1.c,v 1.5 2004/04/28 20:39:35 hshoexer Exp $ */
+/*	$OpenBSD: sha1.c,v 1.11 2014/12/28 10:04:35 tedu Exp $	*/
 
 /*
  * SHA-1 in C
  * By Steve Reid <steve@edmweb.com>
  * 100% Public Domain
- *
+ * 
  * Test Vectors (from FIPS PUB 180-1)
  * "abc"
  *   A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
@@ -14,21 +14,33 @@
  *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
 */
 
+/* #define LITTLE_ENDIAN * This should be #define'd already, if true. */
+/* #define SHA1HANDSOFF * Copies data before messing with it. */
+
+#define SHA1HANDSOFF
+
+#if 0 // crypto extpkg mod
+
+#include <sys/param.h>
+#include <sys/systm.h>
+
+#include <crypto/sha1.h>
+
+#else // crypto extpkg mod
+
 #ifdef HAVE_PLATFORM_H 
   #include "platform.h" 
 #endif
 #include "crypto.h"
 #include "sha1.h"
 
-/* #define SHA1HANDSOFF */ /* Copies data before messing with it. */
-
-#define bcopy(_src,_dest,_len) memcpy(_dest,_src,_len)
+#endif // crypto extpkg mod
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 
 /* blk0() and blk() perform the initial expand. */
 /* I got the idea of expanding during the round function from SSLeay */
-#ifndef WORDS_BIGENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
 #define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
     |(rol(block->l[i],8)&0x00FF00FF))
 #else
@@ -47,19 +59,19 @@
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
 void
-SHA1Transform(u_int32_t state[5], unsigned char buffer[SHA1_BLOCK_LENGTH])
+SHA1Transform(u_int32_t state[5], const unsigned char buffer[SHA1_BLOCK_LENGTH])
 {
     u_int32_t a, b, c, d, e;
     typedef union {
         unsigned char c[64];
-        u_int32_t     l[16];
+        unsigned int l[16];
     } CHAR64LONG16;
     CHAR64LONG16* block;
 #ifdef SHA1HANDSOFF
-    static unsigned char workspace[SHA1_BLOCK_LENGTH];
+    unsigned char workspace[SHA1_BLOCK_LENGTH];
 
     block = (CHAR64LONG16 *)workspace;
-    bcopy(buffer, block, SHA1_BLOCK_LENGTH);
+    memcpy(block, buffer, SHA1_BLOCK_LENGTH);
 #else
     block = (CHAR64LONG16 *)buffer;
 #endif
@@ -121,15 +133,16 @@ SHA1Init(SHA1_CTX *context)
 /* Run your data through this. */
 
 void
-SHA1Update(SHA1_CTX *context, unsigned char *data, unsigned int len)
+SHA1Update(SHA1_CTX *context, const void *dataptr, unsigned int len)
 {
+    const uint8_t *data = dataptr;
     unsigned int i;
     unsigned int j;
 
     j = (u_int32_t)((context->count >> 3) & 63);
     context->count += (len << 3);
     if ((j + len) > 63) {
-        bcopy(data, &context->buffer[j], (i = 64 - j));
+        memcpy(&context->buffer[j], data, (i = 64 - j));
         SHA1Transform(context->state, context->buffer);
         for ( ; i + 63 < len; i += 64) {
             SHA1Transform(context->state, &data[i]);
@@ -137,7 +150,7 @@ SHA1Update(SHA1_CTX *context, unsigned char *data, unsigned int len)
         j = 0;
     }
     else i = 0;
-    bcopy(&data[i], &context->buffer[j], len - i);
+    memcpy(&context->buffer[j], &data[i], len - i);
 }
 
 
@@ -153,26 +166,16 @@ SHA1Final(unsigned char digest[SHA1_DIGEST_LENGTH], SHA1_CTX *context)
         finalcount[i] = (unsigned char)((context->count >>
             ((7 - (i & 7)) * 8)) & 255);  /* Endian independent */
     }
-    SHA1Update(context, (unsigned char *)"\200", 1);
+    SHA1Update(context, "\200", 1);
     while ((context->count & 504) != 448) {
-        SHA1Update(context, (unsigned char *)"\0", 1);
+        SHA1Update(context, "\0", 1);
     }
     SHA1Update(context, finalcount, 8);  /* Should cause a SHA1Transform() */
 
-    if (digest)
-        for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
-            digest[i] = (unsigned char)((context->state[i >> 2] >>
-                ((3 - (i & 3)) * 8)) & 255);
-      }
-#if 0 /* We want to use this for "keyfill" */
-    /* Wipe variables */
-    i = 0;
-    memset(context->buffer, 0, 64);
-    memset(context->state, 0, 20);
-    memset(context->count, 0, 8);
-    memset(&finalcount, 0, 8);
-#ifdef SHA1HANDSOFF  /* make SHA1Transform overwrite it's own static vars */
-    SHA1Transform(context->state, context->buffer);
-#endif
-#endif
+    for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+        digest[i] = (unsigned char)((context->state[i >> 2] >>
+            ((3 - (i & 3)) * 8)) & 255);
+    }
+    explicit_bzero(&finalcount, sizeof(finalcount));
+    explicit_bzero(context, sizeof(*context));
 }

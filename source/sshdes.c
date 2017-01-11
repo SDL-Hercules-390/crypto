@@ -1,6 +1,10 @@
-/* des.c - implementation of DES
- * http://www.tartarus.org/~simon-anonsvn/viewcvs.cgi/putty/
- */
+#if 0 // crypto extpkg mod
+
+#include <assert.h>
+#include "ssh.h"
+
+#else // crypto extpkg mod
+
 /*
  * PuTTY is copyright 1997-2005 Simon Tatham.
  *
@@ -29,24 +33,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* This is a SLIGHTLY modified version of the 'sshdes.c' source file as
- * distributed with PuTTY. The only changes that were made were:
- *
- *  1. The functions 'des_key_setup', 'des_encipher' and 'des_decipher'
- *     were changed from 'static' to non-static.
- *  2. Struct 'DESContext' was moved to a new 'sshdes.h' public header.
- *  3. All code following the 'des_decipher' function was removed since
- *     none of the previously mentioned three functions needed them.
- *  4. The above copyright notice was added.
- *  5. The original '#include' statements were replaced with the below.
- *  6. The comment block you are now reading was added.  :)
- */
-
 #ifdef HAVE_PLATFORM_H 
   #include "platform.h" 
 #endif
 #include "crypto.h"
 #include "sshdes.h"
+
+#endif // crypto extpkg mod
+
+/* des.c - implementation of DES
+ */
 
 /*
  * Description of DES
@@ -190,7 +186,7 @@
 /*
  * Implementation details
  * ----------------------
- *
+ * 
  * If you look at the code in this module, you'll find it looks
  * nothing _like_ the above algorithm. Here I explain the
  * differences...
@@ -238,7 +234,7 @@
  *
  *       3322222222221111111111
  * bit   10987654321098765432109876543210
- *
+ * 
  * box0  XXXXX                          X
  * box1     XXXXXX
  * box2         XXXXXX
@@ -286,7 +282,7 @@
  * the bits with f=1,c=0 and the bits with f=0,c=1. This will cause
  * the bit fedcba to be in position cedfba - we've `swapped' bits c
  * and f in the position of each bit!
- *
+ * 
  * Better still, this transformation is easy. In the example above,
  * bits in L with c=0 are bits 0x0F0F0F0F, and those in R with c=1
  * are 0xF0F0F0F0. So we can do
@@ -299,7 +295,7 @@
  * Also, we can invert the bit at the top just by exchanging L and
  * R. So in a few swaps and a few of these bit operations we can
  * do:
- *
+ * 
  * Initially the position of bit fedcba is     fedcba
  * Swap L with R to make it                    Fedcba
  * Perform bitswap( 4,0x0F0F0F0F) to make it   cedFba
@@ -319,34 +315,44 @@
  * performed by a similar set of operations.
  */
 
+#if !defined( CRYPTO_EXTPKG_MOD )
+
+typedef struct {
+    word32 k0246[16], k1357[16];
+    word32 iv0, iv1;
+} DESContext;
+
+#endif // !defined( CRYPTO_EXTPKG_MOD )
+
 #define rotl(x, c) ( (x << c) | (x >> (32-c)) )
 #define rotl28(x, c) ( ( (x << c) | (x >> (28-c)) ) & 0x0FFFFFFF)
-
-#define GET_32BIT_MSB_FIRST( ptr )       crypto_fetch32( (BYTE*) ptr )
-#define PUT_32BIT_MSB_FIRST( ptr, val )  crypto_store32( ptr, val )
 
 static word32 bitsel(word32 * input, const int *bitnums, int size)
 {
     word32 ret = 0;
     while (size--) {
-        int bitpos = *bitnums++;
-        ret <<= 1;
-        if (bitpos >= 0)
-            ret |= 1 & (input[bitpos / 32] >> (bitpos % 32));
+	int bitpos = *bitnums++;
+	ret <<= 1;
+	if (bitpos >= 0)
+	    ret |= 1 & (input[bitpos / 32] >> (bitpos % 32));
     }
     return ret;
 }
 
-void des_key_setup( word32 key_msw, word32 key_lsw, DESContext* sched )
+#if defined( CRYPTO_EXTPKG_MOD )
+       void des_key_setup(word32 key_msw, word32 key_lsw, DESContext * sched)
+#else
+static void des_key_setup(word32 key_msw, word32 key_lsw, DESContext * sched)
+#endif
 {
 
     static const int PC1_Cbits[] = {
-        7, 15, 23, 31, 39, 47, 55, 63, 6, 14, 22, 30, 38, 46,
-        54, 62, 5, 13, 21, 29, 37, 45, 53, 61, 4, 12, 20, 28
+	7, 15, 23, 31, 39, 47, 55, 63, 6, 14, 22, 30, 38, 46,
+	54, 62, 5, 13, 21, 29, 37, 45, 53, 61, 4, 12, 20, 28
     };
     static const int PC1_Dbits[] = {
-        1, 9, 17, 25, 33, 41, 49, 57, 2, 10, 18, 26, 34, 42,
-        50, 58, 3, 11, 19, 27, 35, 43, 51, 59, 36, 44, 52, 60
+	1, 9, 17, 25, 33, 41, 49, 57, 2, 10, 18, 26, 34, 42,
+	50, 58, 3, 11, 19, 27, 35, 43, 51, 59, 36, 44, 52, 60
     };
     /*
      * The bit numbers in the two lists below don't correspond to
@@ -357,15 +363,15 @@ void des_key_setup( word32 key_msw, word32 key_lsw, DESContext* sched )
      * 0 of C is addressed by writing `32' here.
      */
     static const int PC2_0246[] = {
-        49, 36, 59, 55, -1, -1, 37, 41, 48, 56, 34, 52, -1, -1, 15, 4,
-        25, 19, 9, 1, -1, -1, 12, 7, 17, 0, 22, 3, -1, -1, 46, 43
+	49, 36, 59, 55, -1, -1, 37, 41, 48, 56, 34, 52, -1, -1, 15, 4,
+	25, 19, 9, 1, -1, -1, 12, 7, 17, 0, 22, 3, -1, -1, 46, 43
     };
     static const int PC2_1357[] = {
-        -1, -1, 57, 32, 45, 54, 39, 50, -1, -1, 44, 53, 33, 40, 47, 58,
-        -1, -1, 26, 16, 5, 11, 23, 8, -1, -1, 10, 14, 6, 20, 27, 24
+	-1, -1, 57, 32, 45, 54, 39, 50, -1, -1, 44, 53, 33, 40, 47, 58,
+	-1, -1, 26, 16, 5, 11, 23, 8, -1, -1, 10, 14, 6, 20, 27, 24
     };
     static const int leftshifts[] =
-        { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
+	{ 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
 
     word32 C, D;
     word32 buf[2];
@@ -378,12 +384,12 @@ void des_key_setup( word32 key_msw, word32 key_lsw, DESContext* sched )
     D = bitsel(buf, PC1_Dbits, 28);
 
     for (i = 0; i < 16; i++) {
-        C = rotl28(C, leftshifts[i]);
-        D = rotl28(D, leftshifts[i]);
-        buf[0] = D;
-        buf[1] = C;
-        sched->k0246[i] = bitsel(buf, PC2_0246, 32);
-        sched->k1357[i] = bitsel(buf, PC2_1357, 32);
+	C = rotl28(C, leftshifts[i]);
+	D = rotl28(D, leftshifts[i]);
+	buf[0] = D;
+	buf[1] = C;
+	sched->k0246[i] = bitsel(buf, PC2_0246, 32);
+	sched->k1357[i] = bitsel(buf, PC2_1357, 32);
     }
 
     sched->iv0 = sched->iv1 = 0;
@@ -561,7 +567,13 @@ static const word32 SPboxes[8][64] = {
     bitswap(R, L, 16, 0x0000FFFF), \
     bitswap(R, L,  4, 0x0F0F0F0F))
 
-void des_encipher( word32* output, word32 L, word32 R, DESContext* sched )
+#if defined( CRYPTO_EXTPKG_MOD )
+       void des_encipher(word32 * output, word32 L, word32 R,
+			 DESContext * sched)
+#else // !defined( CRYPTO_EXTPKG_MOD )
+static void des_encipher(word32 * output, word32 L, word32 R,
+			 DESContext * sched)
+#endif // defined( CRYPTO_EXTPKG_MOD )
 {
     word32 swap, s0246, s1357;
 
@@ -600,7 +612,13 @@ void des_encipher( word32* output, word32 L, word32 R, DESContext* sched )
     output[1] = R;
 }
 
-void des_decipher( word32* output, word32 L, word32 R, DESContext* sched )
+#if defined( CRYPTO_EXTPKG_MOD )
+       void des_decipher(word32 * output, word32 L, word32 R,
+			 DESContext * sched)
+#else // !defined( CRYPTO_EXTPKG_MOD )
+static void des_decipher(word32 * output, word32 L, word32 R,
+			 DESContext * sched)
+#endif // defined( CRYPTO_EXTPKG_MOD )
 {
     word32 swap, s0246, s1357;
 
@@ -638,3 +656,498 @@ void des_decipher( word32* output, word32 L, word32 R, DESContext* sched )
     output[0] = L;
     output[1] = R;
 }
+
+#if !defined( CRYPTO_EXTPKG_MOD )
+
+static void des_cbc_encrypt(unsigned char *blk,
+			    unsigned int len, DESContext * sched)
+{
+    word32 out[2], iv0, iv1;
+    unsigned int i;
+
+    assert((len & 7) == 0);
+
+    iv0 = sched->iv0;
+    iv1 = sched->iv1;
+    for (i = 0; i < len; i += 8) {
+	iv0 ^= GET_32BIT_MSB_FIRST(blk);
+	iv1 ^= GET_32BIT_MSB_FIRST(blk + 4);
+	des_encipher(out, iv0, iv1, sched);
+	iv0 = out[0];
+	iv1 = out[1];
+	PUT_32BIT_MSB_FIRST(blk, iv0);
+	PUT_32BIT_MSB_FIRST(blk + 4, iv1);
+	blk += 8;
+    }
+    sched->iv0 = iv0;
+    sched->iv1 = iv1;
+}
+
+static void des_cbc_decrypt(unsigned char *blk,
+			    unsigned int len, DESContext * sched)
+{
+    word32 out[2], iv0, iv1, xL, xR;
+    unsigned int i;
+
+    assert((len & 7) == 0);
+
+    iv0 = sched->iv0;
+    iv1 = sched->iv1;
+    for (i = 0; i < len; i += 8) {
+	xL = GET_32BIT_MSB_FIRST(blk);
+	xR = GET_32BIT_MSB_FIRST(blk + 4);
+	des_decipher(out, xL, xR, sched);
+	iv0 ^= out[0];
+	iv1 ^= out[1];
+	PUT_32BIT_MSB_FIRST(blk, iv0);
+	PUT_32BIT_MSB_FIRST(blk + 4, iv1);
+	blk += 8;
+	iv0 = xL;
+	iv1 = xR;
+    }
+    sched->iv0 = iv0;
+    sched->iv1 = iv1;
+}
+
+static void des_3cbc_encrypt(unsigned char *blk,
+			     unsigned int len, DESContext * scheds)
+{
+    des_cbc_encrypt(blk, len, &scheds[0]);
+    des_cbc_decrypt(blk, len, &scheds[1]);
+    des_cbc_encrypt(blk, len, &scheds[2]);
+}
+
+static void des_cbc3_encrypt(unsigned char *blk,
+			     unsigned int len, DESContext * scheds)
+{
+    word32 out[2], iv0, iv1;
+    unsigned int i;
+
+    assert((len & 7) == 0);
+
+    iv0 = scheds->iv0;
+    iv1 = scheds->iv1;
+    for (i = 0; i < len; i += 8) {
+	iv0 ^= GET_32BIT_MSB_FIRST(blk);
+	iv1 ^= GET_32BIT_MSB_FIRST(blk + 4);
+	des_encipher(out, iv0, iv1, &scheds[0]);
+	des_decipher(out, out[0], out[1], &scheds[1]);
+	des_encipher(out, out[0], out[1], &scheds[2]);
+	iv0 = out[0];
+	iv1 = out[1];
+	PUT_32BIT_MSB_FIRST(blk, iv0);
+	PUT_32BIT_MSB_FIRST(blk + 4, iv1);
+	blk += 8;
+    }
+    scheds->iv0 = iv0;
+    scheds->iv1 = iv1;
+}
+
+static void des_3cbc_decrypt(unsigned char *blk,
+			     unsigned int len, DESContext * scheds)
+{
+    des_cbc_decrypt(blk, len, &scheds[2]);
+    des_cbc_encrypt(blk, len, &scheds[1]);
+    des_cbc_decrypt(blk, len, &scheds[0]);
+}
+
+static void des_cbc3_decrypt(unsigned char *blk,
+			     unsigned int len, DESContext * scheds)
+{
+    word32 out[2], iv0, iv1, xL, xR;
+    unsigned int i;
+
+    assert((len & 7) == 0);
+
+    iv0 = scheds->iv0;
+    iv1 = scheds->iv1;
+    for (i = 0; i < len; i += 8) {
+	xL = GET_32BIT_MSB_FIRST(blk);
+	xR = GET_32BIT_MSB_FIRST(blk + 4);
+	des_decipher(out, xL, xR, &scheds[2]);
+	des_encipher(out, out[0], out[1], &scheds[1]);
+	des_decipher(out, out[0], out[1], &scheds[0]);
+	iv0 ^= out[0];
+	iv1 ^= out[1];
+	PUT_32BIT_MSB_FIRST(blk, iv0);
+	PUT_32BIT_MSB_FIRST(blk + 4, iv1);
+	blk += 8;
+	iv0 = xL;
+	iv1 = xR;
+    }
+    scheds->iv0 = iv0;
+    scheds->iv1 = iv1;
+}
+
+static void des_sdctr3(unsigned char *blk,
+			     unsigned int len, DESContext * scheds)
+{
+    word32 b[2], iv0, iv1, tmp;
+    unsigned int i;
+
+    assert((len & 7) == 0);
+
+    iv0 = scheds->iv0;
+    iv1 = scheds->iv1;
+    for (i = 0; i < len; i += 8) {
+	des_encipher(b, iv0, iv1, &scheds[0]);
+	des_decipher(b, b[0], b[1], &scheds[1]);
+	des_encipher(b, b[0], b[1], &scheds[2]);
+	tmp = GET_32BIT_MSB_FIRST(blk);
+	PUT_32BIT_MSB_FIRST(blk, tmp ^ b[0]);
+	blk += 4;
+	tmp = GET_32BIT_MSB_FIRST(blk);
+	PUT_32BIT_MSB_FIRST(blk, tmp ^ b[1]);
+	blk += 4;
+	if ((iv1 = (iv1 + 1) & 0xffffffff) == 0)
+	    iv0 = (iv0 + 1) & 0xffffffff;
+    }
+    scheds->iv0 = iv0;
+    scheds->iv1 = iv1;
+}
+
+static void *des3_make_context(void)
+{
+    return snewn(3, DESContext);
+}
+
+static void *des3_ssh1_make_context(void)
+{
+    /* Need 3 keys for each direction, in SSH-1 */
+    return snewn(6, DESContext);
+}
+
+static void *des_make_context(void)
+{
+    return snew(DESContext);
+}
+
+static void *des_ssh1_make_context(void)
+{
+    /* Need one key for each direction, in SSH-1 */
+    return snewn(2, DESContext);
+}
+
+static void des3_free_context(void *handle)   /* used for both 3DES and DES */
+{
+    sfree(handle);
+}
+
+static void des3_key(void *handle, unsigned char *key)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &keys[0]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 8),
+		  GET_32BIT_MSB_FIRST(key + 12), &keys[1]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 16),
+		  GET_32BIT_MSB_FIRST(key + 20), &keys[2]);
+}
+
+static void des3_iv(void *handle, unsigned char *key)
+{
+    DESContext *keys = (DESContext *) handle;
+    keys[0].iv0 = GET_32BIT_MSB_FIRST(key);
+    keys[0].iv1 = GET_32BIT_MSB_FIRST(key + 4);
+}
+
+static void des_key(void *handle, unsigned char *key)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &keys[0]);
+}
+
+static void des3_sesskey(void *handle, unsigned char *key)
+{
+    DESContext *keys = (DESContext *) handle;
+    des3_key(keys, key);
+    des3_key(keys+3, key);
+}
+
+static void des3_encrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_3cbc_encrypt(blk, len, keys);
+}
+
+static void des3_decrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_3cbc_decrypt(blk, len, keys+3);
+}
+
+static void des3_ssh2_encrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc3_encrypt(blk, len, keys);
+}
+
+static void des3_ssh2_decrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc3_decrypt(blk, len, keys);
+}
+
+static void des3_ssh2_sdctr(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_sdctr3(blk, len, keys);
+}
+
+static void des_ssh2_encrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc_encrypt(blk, len, keys);
+}
+
+static void des_ssh2_decrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc_decrypt(blk, len, keys);
+}
+
+void des3_decrypt_pubkey(unsigned char *key, unsigned char *blk, int len)
+{
+    DESContext ourkeys[3];
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[0]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 8),
+		  GET_32BIT_MSB_FIRST(key + 12), &ourkeys[1]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[2]);
+    des_3cbc_decrypt(blk, len, ourkeys);
+    smemclr(ourkeys, sizeof(ourkeys));
+}
+
+void des3_encrypt_pubkey(unsigned char *key, unsigned char *blk, int len)
+{
+    DESContext ourkeys[3];
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[0]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 8),
+		  GET_32BIT_MSB_FIRST(key + 12), &ourkeys[1]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[2]);
+    des_3cbc_encrypt(blk, len, ourkeys);
+    smemclr(ourkeys, sizeof(ourkeys));
+}
+
+void des3_decrypt_pubkey_ossh(unsigned char *key, unsigned char *iv,
+			      unsigned char *blk, int len)
+{
+    DESContext ourkeys[3];
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[0]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 8),
+		  GET_32BIT_MSB_FIRST(key + 12), &ourkeys[1]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 16),
+		  GET_32BIT_MSB_FIRST(key + 20), &ourkeys[2]);
+    ourkeys[0].iv0 = GET_32BIT_MSB_FIRST(iv);
+    ourkeys[0].iv1 = GET_32BIT_MSB_FIRST(iv+4);
+    des_cbc3_decrypt(blk, len, ourkeys);
+    smemclr(ourkeys, sizeof(ourkeys));
+}
+
+void des3_encrypt_pubkey_ossh(unsigned char *key, unsigned char *iv,
+			      unsigned char *blk, int len)
+{
+    DESContext ourkeys[3];
+    des_key_setup(GET_32BIT_MSB_FIRST(key),
+		  GET_32BIT_MSB_FIRST(key + 4), &ourkeys[0]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 8),
+		  GET_32BIT_MSB_FIRST(key + 12), &ourkeys[1]);
+    des_key_setup(GET_32BIT_MSB_FIRST(key + 16),
+		  GET_32BIT_MSB_FIRST(key + 20), &ourkeys[2]);
+    ourkeys[0].iv0 = GET_32BIT_MSB_FIRST(iv);
+    ourkeys[0].iv1 = GET_32BIT_MSB_FIRST(iv+4);
+    des_cbc3_encrypt(blk, len, ourkeys);
+    smemclr(ourkeys, sizeof(ourkeys));
+}
+
+static void des_keysetup_xdmauth(const unsigned char *keydata, DESContext *dc)
+{
+    unsigned char key[8];
+    int i, nbits, j;
+    unsigned int bits;
+
+    bits = 0;
+    nbits = 0;
+    j = 0;
+    for (i = 0; i < 8; i++) {
+	if (nbits < 7) {
+	    bits = (bits << 8) | keydata[j];
+	    nbits += 8;
+	    j++;
+	}
+	key[i] = (bits >> (nbits - 7)) << 1;
+	bits &= ~(0x7F << (nbits - 7));
+	nbits -= 7;
+    }
+
+    des_key_setup(GET_32BIT_MSB_FIRST(key), GET_32BIT_MSB_FIRST(key + 4), dc);
+}
+
+void des_encrypt_xdmauth(const unsigned char *keydata,
+                         unsigned char *blk, int len)
+{
+    DESContext dc;
+    des_keysetup_xdmauth(keydata, &dc);
+    des_cbc_encrypt(blk, len, &dc);
+}
+
+void des_decrypt_xdmauth(const unsigned char *keydata,
+                         unsigned char *blk, int len)
+{
+    DESContext dc;
+    des_keysetup_xdmauth(keydata, &dc);
+    des_cbc_decrypt(blk, len, &dc);
+}
+
+static const struct ssh2_cipher ssh_3des_ssh2 = {
+    des3_make_context, des3_free_context, des3_iv, des3_key,
+    des3_ssh2_encrypt_blk, des3_ssh2_decrypt_blk, NULL, NULL,
+    "3des-cbc",
+    8, 168, 24, SSH_CIPHER_IS_CBC, "triple-DES CBC",
+    NULL
+};
+
+static const struct ssh2_cipher ssh_3des_ssh2_ctr = {
+    des3_make_context, des3_free_context, des3_iv, des3_key,
+    des3_ssh2_sdctr, des3_ssh2_sdctr, NULL, NULL,
+    "3des-ctr",
+    8, 168, 24, 0, "triple-DES SDCTR",
+    NULL
+};
+
+/*
+ * Single DES in SSH-2. "des-cbc" is marked as HISTORIC in
+ * RFC 4250, referring to
+ * FIPS-46-3.  ("Single DES (i.e., DES) will be permitted 
+ * for legacy systems only.") , but ssh.com support it and 
+ * apparently aren't the only people to do so, so we sigh 
+ * and implement it anyway.
+ */
+static const struct ssh2_cipher ssh_des_ssh2 = {
+    des_make_context, des3_free_context, des3_iv, des_key,
+    des_ssh2_encrypt_blk, des_ssh2_decrypt_blk, NULL, NULL,
+    "des-cbc",
+    8, 56, 8, SSH_CIPHER_IS_CBC, "single-DES CBC",
+    NULL
+};
+
+static const struct ssh2_cipher ssh_des_sshcom_ssh2 = {
+    des_make_context, des3_free_context, des3_iv, des_key,
+    des_ssh2_encrypt_blk, des_ssh2_decrypt_blk, NULL, NULL,
+    "des-cbc@ssh.com",
+    8, 56, 8, SSH_CIPHER_IS_CBC, "single-DES CBC",
+    NULL
+};
+
+static const struct ssh2_cipher *const des3_list[] = {
+    &ssh_3des_ssh2_ctr,
+    &ssh_3des_ssh2
+};
+
+const struct ssh2_ciphers ssh2_3des = {
+    sizeof(des3_list) / sizeof(*des3_list),
+    des3_list
+};
+
+static const struct ssh2_cipher *const des_list[] = {
+    &ssh_des_ssh2,
+    &ssh_des_sshcom_ssh2
+};
+
+const struct ssh2_ciphers ssh2_des = {
+    sizeof(des_list) / sizeof(*des_list),
+    des_list
+};
+
+const struct ssh_cipher ssh_3des = {
+    des3_ssh1_make_context, des3_free_context, des3_sesskey,
+    des3_encrypt_blk, des3_decrypt_blk,
+    8, "triple-DES inner-CBC"
+};
+
+static void des_sesskey(void *handle, unsigned char *key)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_key(keys, key);
+    des_key(keys+1, key);
+}
+
+static void des_encrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc_encrypt(blk, len, keys);
+}
+
+static void des_decrypt_blk(void *handle, unsigned char *blk, int len)
+{
+    DESContext *keys = (DESContext *) handle;
+    des_cbc_decrypt(blk, len, keys+1);
+}
+
+const struct ssh_cipher ssh_des = {
+    des_ssh1_make_context, des3_free_context, des_sesskey,
+    des_encrypt_blk, des_decrypt_blk,
+    8, "single-DES CBC"
+};
+
+#ifdef TEST_XDM_AUTH
+
+/*
+ * Small standalone utility which allows encryption and decryption of
+ * single cipher blocks in the XDM-AUTHORIZATION-1 style. Written
+ * during the rework of X authorisation for connection sharing, to
+ * check the corner case when xa1_firstblock matches but the rest of
+ * the authorisation is bogus.
+ *
+ * Just compile this file on its own with the above ifdef symbol
+ * predefined:
+
+gcc -DTEST_XDM_AUTH -o sshdes sshdes.c
+
+ */
+
+#include <stdlib.h>
+void *safemalloc(size_t n, size_t size) { return calloc(n, size); }
+void safefree(void *p) { return free(p); }
+void smemclr(void *p, size_t size) { memset(p, 0, size); }
+int main(int argc, char **argv)
+{
+    unsigned char words[2][8];
+    unsigned char out[8];
+    int i, j;
+
+    memset(words, 0, sizeof(words));
+
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 8 && argv[i+1][2*j]; j++) {
+            char x[3];
+            unsigned u;
+            x[0] = argv[i+1][2*j];
+            x[1] = argv[i+1][2*j+1];
+            x[2] = 0;
+            sscanf(x, "%02x", &u);
+            words[i][j] = u;
+        }
+    }
+
+    memcpy(out, words[0], 8);
+    des_decrypt_xdmauth(words[1], out, 8);
+    printf("decrypt(%s,%s) = ", argv[1], argv[2]);
+    for (i = 0; i < 8; i++) printf("%02x", out[i]);
+    printf("\n");
+
+    memcpy(out, words[0], 8);
+    des_encrypt_xdmauth(words[1], out, 8);
+    printf("encrypt(%s,%s) = ", argv[1], argv[2]);
+    for (i = 0; i < 8; i++) printf("%02x", out[i]);
+    printf("\n");
+}
+
+#endif
+
+#endif // !defined( CRYPTO_EXTPKG_MOD )
