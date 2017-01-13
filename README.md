@@ -1,4 +1,6 @@
-# Crypto - Simple AES/DES encryption and SHA1/SHA2 hashing library
+# Crypto
+### Simple AES/DES encryption and SHA1/SHA2 hashing library
+#### version 1.0.0
 
 ## Overview
 

@@ -10,6 +10,8 @@
 
 set( ${PROJECT_NAME}_SRCS
 
+     crypto_version.c
+
      source/rijndael.c
      source/sha1.c
      source/sha2.c

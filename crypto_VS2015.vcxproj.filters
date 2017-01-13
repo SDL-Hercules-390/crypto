@@ -60,6 +60,9 @@
     <ClCompile Include="source\sshdes.c">
       <Filter>Source Files\source</Filter>
     </ClCompile>
+    <ClCompile Include="crypto_version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\crypto.h">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="include\sshdes.h">
       <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="crypto_version.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +116,9 @@
       <Filter>Other Files\build\cmake\modules</Filter>
     </None>
     <None Include="cmake\modules\Vdump.cmake">
+      <Filter>Other Files\build\cmake\modules</Filter>
+    </None>
+    <None Include="cmake\modules\Version.cmake">
       <Filter>Other Files\build\cmake\modules</Filter>
     </None>
     <None Include="crypto_VS2008.sln">

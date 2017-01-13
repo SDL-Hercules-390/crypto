@@ -141,6 +141,7 @@
     <ClCompile Include="source\sha1.c" />
     <ClCompile Include="source\sha2.c" />
     <ClCompile Include="source\sshdes.c" />
+    <ClCompile Include="crypto_version.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\crypto.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="include\sha1.h" />
     <ClInclude Include="include\sha2.h" />
     <ClInclude Include="include\sshdes.h" />
+    <ClInclude Include="crypto_version.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
@@ -161,6 +163,7 @@
     <None Include="cmake\modules\ParseBinaryDir.cmake" />
     <None Include="cmake\modules\Trace.cmake" />
     <None Include="cmake\modules\Vdump.cmake" />
+    <None Include="cmake\modules\Version.cmake" />
     <None Include="cmake_uninstall.cmake.in" />
     <None Include="platform.h.in" />
     <None Include="vstools.cmd" />

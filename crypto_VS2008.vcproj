@@ -110,6 +110,14 @@
 		<Filter
 			Name="Source Files"
 			>
+			<File
+				RelativePath=".\crypto_version.c"
+				>
+			</File>
+			<File
+				RelativePath=".\crypto_version.h"
+				>
+			</File>
 			<Filter
 				Name="include"
 				>
@@ -213,6 +221,10 @@
 						</File>
 						<File
 							RelativePath="cmake\modules\Vdump.cmake"
+							>
+						</File>
+						<File
+							RelativePath=".\cmake\modules\Version.cmake"
 							>
 						</File>
 					</Filter>

@@ -2,10 +2,11 @@
 #   Define the project
 #------------------------------------------------------------------------------
 
-project( crypto VERSION 1.0.0 )
+set( EXTPKG_NAME  "crypto"                                                  )
+set( EXTPKG_VERS  "1.0.0"                                                   )
+set( EXTPKG_DESC  "Simple AES/DES encryption and SHA1/SHA2 hashing library" )
 
-set( PROJECT_DESCRIPTION
-     "Simple AES/DES encryption and SHA1/SHA2 hashing library"
-     CACHE PATH "Project description" FORCE )
+project( ${EXTPKG_NAME} VERSION ${EXTPKG_VERS} )
+set( PROJECT_DESCRIPTION "${EXTPKG_DESC}" CACHE PATH "Project description" FORCE )
 
 #------------------------------------------------------------------------------
