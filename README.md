@@ -156,7 +156,7 @@ If clang/clang++ is not in your $PATH, then you will need to specify its full pa
 
 -------------------------------------------------------------------------------
 
-## Manual command-line method
+## Manual Command Line Method
 
 The crypto project is hosted on GitHub at the following URL:
 
@@ -227,7 +227,7 @@ Surround `INSTALL_PREFIX=dirpath` with double quotes if it contains blanks.
 
 -------------------------------------------------------------------------------
 
-## Automated command-line method
+## Automated Command Line Method
 
 To make things _REALLY SIMPLE_ on both Windows and Linux you can instead use the provided **build** script (`build.cmd` on Windows, just `build` on Linux) which performs the complete build for you by automatically creating all of the needed build directories and then invoking all needed commands in turn to build and install the package for the given architecture/configuration.
 
@@ -245,7 +245,7 @@ Enter `build --help` and/or refer to the appropriate Hercules documentation for 
 
 -------------------------------------------------------------------------------
 
-## Visual Studio GUI method
+## Visual Studio GUI Method
 
 To make things _EVEN SIMPLER_ on Windows (but with one minor snag), simply open the provided Visual Studio solution (.sln) file and then click the "Rebuild All" toolbar button.
 
@@ -259,7 +259,7 @@ If you are experienced with Visual Studio however, you can manually edit the "Bu
 
 -------------------------------------------------------------------------------
 
-## Non-x86 architectures
+## Non-x86 Architectures
 
 To build a non-x86 architectural version of an external package simply build it like normal but install it within its own unique architectural directory within Hercules's main external package subdirectory.  That is to say, you should specify e.g. `hyperion/crypto/sparc` as your `--install` directory.
 
