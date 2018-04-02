@@ -1,4 +1,4 @@
-/*	$OpenBSD: sha1.c,v 1.11 2014/12/28 10:04:35 tedu Exp $	*/
+/*      $OpenBSD: sha1.c,v 1.11 2014/12/28 10:04:35 tedu Exp $  */
 
 /*
  * SHA-1 in C
