@@ -316,6 +316,22 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="VS2017"
+						>
+						<File
+							RelativePath=".\crypto_VS2017.sln"
+							>
+						</File>
+						<File
+							RelativePath=".\crypto_VS2017.vcxproj"
+							>
+						</File>
+						<File
+							RelativePath=".\crypto_VS2017.vcxproj.filters"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
