@@ -183,10 +183,10 @@
     <Text Include="targetver.txt">
       <Filter>Other Files\build\cmake\includes</Filter>
     </Text>
-    <Text Include="LICENSE.txt">
+    <Text Include="crypto.LICENSE.txt">
       <Filter>Other Files\doc</Filter>
     </Text>
-    <Text Include="README.txt">
+    <Text Include="crypto.README.txt">
       <Filter>Other Files\doc</Filter>
     </Text>
     <Text Include="README.md">

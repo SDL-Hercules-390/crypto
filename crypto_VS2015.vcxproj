@@ -185,8 +185,8 @@
     <Text Include="sources.txt" />
     <Text Include="targetver.txt" />
     <Text Include="CMakeLists.txt" />
-    <Text Include="LICENSE.txt" />
-    <Text Include="README.txt" />
+    <Text Include="crypto.LICENSE.txt" />
+    <Text Include="crypto.README.txt" />
     <Text Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

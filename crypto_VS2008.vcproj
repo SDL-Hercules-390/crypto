@@ -338,7 +338,7 @@
 				Name="doc"
 				>
 				<File
-					RelativePath=".\LICENSE.txt"
+					RelativePath=".\crypto.LICENSE.txt"
 					>
 				</File>
 				<File
@@ -346,7 +346,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\README.txt"
+					RelativePath=".\crypto.README.txt"
 					>
 				</File>
 			</Filter>
