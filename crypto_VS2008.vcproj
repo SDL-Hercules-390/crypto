@@ -170,6 +170,10 @@
 				RelativePath=".gitattributes"
 				>
 			</File>
+			<File
+				RelativePath=".\README.md"
+				>
+			</File>
 			<Filter
 				Name="build"
 				>
@@ -335,10 +339,6 @@
 				>
 				<File
 					RelativePath=".\crypto.LICENSE.txt"
-					>
-				</File>
-				<File
-					RelativePath=".\README.md"
 					>
 				</File>
 				<File
