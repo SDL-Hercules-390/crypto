@@ -332,6 +332,22 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="VS2019"
+						>
+						<File
+							RelativePath=".\crypto_VS2019.sln"
+							>
+						</File>
+						<File
+							RelativePath=".\crypto_VS2019.vcxproj"
+							>
+						</File>
+						<File
+							RelativePath=".\crypto_VS2019.vcxproj.filters"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

@@ -174,6 +174,9 @@
     <None Include="crypto_VS2017.sln" />
     <None Include="crypto_VS2017.vcxproj" />
     <None Include="crypto_VS2017.vcxproj.filters" />
+    <None Include="crypto_VS2019.sln" />
+    <None Include="crypto_VS2019.vcxproj" />
+    <None Include="crypto_VS2019.vcxproj.filters" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="cflags.txt" />
