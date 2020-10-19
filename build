@@ -999,21 +999,11 @@ validate_args()
     errmsg "ERROR: Invalid machine cpu \"$cpu\""
   fi
 
-  if [[ "$cpu" == "x86"  ]] || \
-     [[ "$cpu" == "i686" ]]; then
-    cpu=""
-  fi
-
-  #----------------------------------------------------------------------------
-  #  Validate arg sanity
-
-  #  Check for conflicting options, etc...
-
-  # We do not do a 64-bit build for i686
-  trace "Debug: checking for incorrect i686 bitness"
+  # We do not try a 64-bit build for i686
+  trace "Debug: checking for 64-bit i686"
   if [[ "$cpu" == "i686" ]] && \
      [[ "$arch" == "64" ]]; then
-    errmsg "ERROR: i686 builds are 32-bit only."
+    errmsg "ERROR: i686 builds are intended to be 32-bit only."
   fi
 
   # We cannot build a 32-bit aarch64, nor a 64-bit arm
@@ -1027,6 +1017,16 @@ validate_args()
      [[ "$arch" == "32" ]]; then
     errmsg "ERROR: aarch64 builds are 64-bit only."
   fi
+
+  if [[ "$cpu" == "x86"  ]] || \
+     [[ "$cpu" == "i686" ]]; then
+    cpu=""
+  fi
+
+  #----------------------------------------------------------------------------
+  #  Validate arg sanity
+
+  #  Check for conflicting options, etc...
 
   if [[ -n $install ]] && [[ -n $uninstall ]]; then
     errmsg "ERROR: Cannot specify both install and uninstall."
