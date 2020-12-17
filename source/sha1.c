@@ -116,7 +116,9 @@ SHA1Transform(u_int32_t state[5], const unsigned char buffer[SHA1_BLOCK_LENGTH])
     explicit_bzero(&c,sizeof(c));
     explicit_bzero(&d,sizeof(d));
     explicit_bzero(&e,sizeof(e));
-    return;
+#ifdef SHA1HANDSOFF
+    explicit_bzero(workspace,sizeof(workspace));
+#endif
 }
 
 
