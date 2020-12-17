@@ -357,7 +357,18 @@ SHA256Transform(u_int32_t *state, const u_int8_t *data)
         state[7] += h;
 
         /* Clean up */
-        a = b = c = d = e = f = g = h = T1 = 0;
+        explicit_bzero(&a,sizeof(a));
+        explicit_bzero(&b,sizeof(b));
+        explicit_bzero(&c,sizeof(c));
+        explicit_bzero(&d,sizeof(d));
+        explicit_bzero(&e,sizeof(e));
+        explicit_bzero(&f,sizeof(f));
+        explicit_bzero(&g,sizeof(g));
+        explicit_bzero(&h,sizeof(h));
+        explicit_bzero(&s0,sizeof(s0));
+        explicit_bzero(&s1,sizeof(s1));
+        explicit_bzero(&T1,sizeof(T1));
+        explicit_bzero(W256,sizeof(W256));
 }
 
 #else /* SHA2_UNROLL_TRANSFORM */
@@ -433,7 +444,19 @@ SHA256Transform(u_int32_t *state, const u_int8_t *data)
         state[7] += h;
 
         /* Clean up */
-        a = b = c = d = e = f = g = h = T1 = T2 = 0;
+        explicit_bzero(&a,sizeof(a));
+        explicit_bzero(&b,sizeof(b));
+        explicit_bzero(&c,sizeof(c));
+        explicit_bzero(&d,sizeof(d));
+        explicit_bzero(&e,sizeof(e));
+        explicit_bzero(&f,sizeof(f));
+        explicit_bzero(&g,sizeof(g));
+        explicit_bzero(&h,sizeof(h));
+        explicit_bzero(&s0,sizeof(s0));
+        explicit_bzero(&s1,sizeof(s1));
+        explicit_bzero(&T1,sizeof(T1));
+        explicit_bzero(&T2,sizeof(T2));
+        explicit_bzero(W256,sizeof(W256));
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
@@ -540,7 +563,7 @@ SHA256Final(u_int8_t digest[], SHA2_CTX *context)
         memcpy(digest, context->state.st32, SHA256_DIGEST_LENGTH);
         /* Clean up state data: */
         explicit_bzero(context, sizeof(*context));
-        usedspace = 0;
+        explicit_bzero(&usedspace,sizeof(usedspace));
 }
 
 
@@ -635,7 +658,16 @@ SHA512Transform(u_int64_t *state, const u_int8_t *data)
         state[7] += h;
 
         /* Clean up */
-        a = b = c = d = e = f = g = h = T1 = 0;
+        explicit_bzero(&a,sizeof(a));
+        explicit_bzero(&b,sizeof(b));
+        explicit_bzero(&c,sizeof(c));
+        explicit_bzero(&d,sizeof(d));
+        explicit_bzero(&e,sizeof(e));
+        explicit_bzero(&f,sizeof(f));
+        explicit_bzero(&g,sizeof(g));
+        explicit_bzero(&h,sizeof(h));
+        explicit_bzero(&T1,sizeof(T1));
+        explicit_bzero(W512,sizeof(W512));
 }
 
 #else /* SHA2_UNROLL_TRANSFORM */
@@ -713,7 +745,19 @@ SHA512Transform(u_int64_t *state, const u_int8_t *data)
         state[7] += h;
 
         /* Clean up */
-        a = b = c = d = e = f = g = h = T1 = T2 = 0;
+        explicit_bzero(&a,sizeof(a));
+        explicit_bzero(&b,sizeof(b));
+        explicit_bzero(&c,sizeof(c));
+        explicit_bzero(&d,sizeof(d));
+        explicit_bzero(&e,sizeof(e));
+        explicit_bzero(&f,sizeof(f));
+        explicit_bzero(&g,sizeof(g));
+        explicit_bzero(&s0,sizeof(s0));
+        explicit_bzero(&s1,sizeof(s1));
+        explicit_bzero(&h,sizeof(h));
+        explicit_bzero(&T1,sizeof(T1));
+        explicit_bzero(&T2,sizeof(T2));
+        explicit_bzero(W512,sizeof(W512));
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
