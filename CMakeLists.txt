@@ -80,7 +80,7 @@ if( NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/platform.h.in )
     message( FATAL_ERROR "Unable to find platform.h.in!" )
 else()
     configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/platform.h.in
-                    ${CMAKE_BINARY_DIR}/platform.h )
+                    ${CMAKE_CURRENT_BINARY_DIR}/platform.h )
 endif()
 
 
