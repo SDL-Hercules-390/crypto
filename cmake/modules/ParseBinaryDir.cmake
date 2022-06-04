@@ -80,7 +80,10 @@ Remove the 'CMakeCache.txt' file and the entire 'CMakeFiles' directory and try a
 
     string( LENGTH ${CONFIG} _n )
     if( ${_n} LESS 1 )
-        message( FATAL_ERROR "Invalid Release/Debug build type! ${CONFIG}" )
+        message( WARNING "Invalid Release/Debug build type! ${CONFIG}" )
+        message( WARNING "Defaulting to Release_64" )
+        set ( CONFIG "Release" )
+        set ( LENGTH "_64" )
     endif()
 
     #--------------------------------------------------------------------------
