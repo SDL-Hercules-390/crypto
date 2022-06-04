@@ -133,7 +133,7 @@ Remove the 'CMakeCache.txt' file and the entire 'CMakeFiles' directory and try a
         message( WARNING "Invalid package architecture! ${BITNESS}" )
         message( WARNING "Defaulting to 64-bit" )
         set( BITNESS "64" )
-        set( BASENAME "crypto" )
+        set( BASENAME ${EXTPKG_NAME} )
     endif()
 
     #--------------------------------------------------------------------------
