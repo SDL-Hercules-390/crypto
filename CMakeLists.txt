@@ -153,7 +153,7 @@ configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
 
 #  Now simply define an uninstall target that will run the above script.
 
-add_custom_target( uninstall
+add_custom_target( ${EXTPKG_NAME}_uninstall
                    COMMAND ${CMAKE_COMMAND} -P
                    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" )
 
